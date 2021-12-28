@@ -15,15 +15,17 @@ namespace TestTaskSimCorp
             return Math.Round(intRate * summ, 2);
         }
 
-        public int CalculatePaymentNumbers(DateTime agreementDate, DateTime calculationDate)
+        public int CalculatePaymentNumbers(int years)
         {
-            int paymentNums = 0;
-            paymentNums = calculationDate.Month - agreementDate.Month;
-            paymentNums += (calculationDate.Year - agreementDate.Year) * 12;
-            return paymentNums;
+            return years*12;
         }
 
-
+        public double CalculatePaymentGap(DateTime endDate, DateTime calculationDate, int paymentNumbers)
+        {
+            double paymentGap = (endDate - calculationDate).TotalDays;
+            paymentGap = Math.Round(paymentGap/paymentNumbers, 1);
+            return paymentGap;
+        }
 
         public double CalculateMonthlyRate(double intRate)
         {

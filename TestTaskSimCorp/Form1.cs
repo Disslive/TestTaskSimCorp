@@ -7,7 +7,7 @@ namespace TestTaskSimCorp
     public partial class Form1 : Form
     {
 
-        double intRate, invSumm, paymentAmount, principalAmount, interestAmount, totalPayments, totalInterest;
+        double intRate, invSumm, paymentAmount, principalAmount, interestAmount, totalPayments, totalInterest, paymentGap;
         DateTime agreementDate, paymentDate, calculationDate, endDate;
         int years, paymentNumbers;
         string message;
@@ -37,13 +37,11 @@ namespace TestTaskSimCorp
                 if (endDate > agreementDate && calculationDate > agreementDate && calculationDate < endDate && calculationDate >= agreementDate.AddMonths(1).AddDays(-1))
                 {
                     intRate = pc.CalculateMonthlyRate(intRate);
-
-
-
-                    paymentNumbers = pc.CalculatePaymentNumbers(agreementDate, calculationDate);
+                    paymentNumbers = pc.CalculatePaymentNumbers(years);
                     paymentAmount = pc.CalculatePaymentAmount(invSumm, intRate, paymentNumbers);
-                    paymentDate = agreementDate;
+                    paymentDate = calculationDate;
                     totalInterest = invSumm;
+                    paymentGap = pc.CalculatePaymentGap(endDate, calculationDate, paymentNumbers);
                     while (invSumm != 0)
                     {
                         interestAmount = pc.CalculateInterestAmount(invSumm, intRate);
@@ -51,18 +49,19 @@ namespace TestTaskSimCorp
                         {
                             principalAmount = Math.Round(paymentAmount - interestAmount, 2);
                             invSumm = Math.Round(invSumm - principalAmount, 2);
-                            paymentDate = paymentDate.AddMonths(1);
+                            paymentDate = paymentDate.AddDays(paymentGap);
                         }
                         else
                         {
                             principalAmount = invSumm;
                             invSumm = 0;
                             paymentAmount = Math.Round(principalAmount + interestAmount, 2);
-                            paymentDate = calculationDate;
+                            paymentDate = endDate;
                         }
                         totalPayments += paymentAmount;
                         table = CreateRow(paymentDate, paymentAmount, principalAmount, interestAmount, table, columnnames);
                     }
+                    totalPayments = Math.Round(totalPayments, 2);
                     totalInterest = Math.Round(totalPayments - totalInterest, 2);
                     dataGridView1.DataSource = null;
                     dataGridView1.DataSource = table;
